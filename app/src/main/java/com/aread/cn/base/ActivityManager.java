@@ -42,7 +42,7 @@ public class ActivityManager {
     public void finshAllActivity(){
         synchronized (activityStack){
             for (int i = 0; i < activityStack.size(); i++) {
-                activityStack.remove(i).finish();
+                activityStack.get(i).finish();
             }
             activityStack.clear();
         }
