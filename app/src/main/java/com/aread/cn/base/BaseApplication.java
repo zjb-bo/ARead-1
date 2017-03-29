@@ -1,4 +1,4 @@
-package com.aread.cn.application;
+package com.aread.cn.base;
 
 import android.app.Application;
 

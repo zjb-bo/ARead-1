@@ -28,4 +28,21 @@
         android:id="@+id/btnqq"
         android:layout_below="@+id/button"
         android:layout_alignStart="@+id/button" />
+
+    <Button
+        android:text="微博登录"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnwb"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/btnqq" />
+
+    <Button
+        android:text="微信登录"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:id="@+id/btnwx"
+        android:layout_below="@+id/btnwb"
+        android:layout_alignStart="@+id/btnwb" />
 </RelativeLayout>

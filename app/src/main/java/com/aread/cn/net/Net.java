@@ -2,7 +2,7 @@ package com.aread.cn.net;
 
 import android.content.Context;
 
-import com.aread.cn.application.BaseApplication;
+import com.aread.cn.base.BaseApplication;
 import com.aread.cn.bean.TokenBean;
 import com.aread.cn.bean.Users;
 import com.aread.cn.utils.Contants;
