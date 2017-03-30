@@ -1,5 +1,7 @@
 package com.aread.cn.base;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +12,15 @@ import android.view.Window;
  */
 
 public abstract class BaseActivity extends AppCompatActivity{
+    public ViewDataBinding viewDataBinding;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setViewBefore();
         if(setView() != 0){
-            setContentView(setView());
+            viewDataBinding = DataBindingUtil.setContentView(this, setView());
         }
         initData();
         //push each activity to ActivityManger when created

@@ -1,13 +1,13 @@
 package com.aread.cn.activity;
 
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
+import com.aread.cn.databinding.ActivitySplashBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ import java.util.List;
  */
 
 public class SplashActivity extends BaseActivity {
+    private ActivitySplashBinding splashBinding;
     @Override
     protected int setView() {
         return R.layout.activity_splash;
@@ -24,15 +25,15 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        splashBinding = (ActivitySplashBinding) viewDataBinding;
         final List<ImageView> list = new ArrayList<>();
-        int[] idArray = new int[]{R.mipmap.first,R.mipmap.seccond,R.mipmap.third};
-        for (int i = 0; i < 3; i++) {
+        int[] idArray = new int[]{R.mipmap.first,R.mipmap.seccond,R.mipmap.third,R.mipmap.guid};
+        for (int i = 0; i < idArray.length; i++) {
             ImageView imageView = new ImageView(this);
             imageView.setBackgroundResource(idArray[i]);
             list.add(imageView);
         }
-        viewPager.setAdapter(new PagerAdapter() {
+        splashBinding.viewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
                 return list.size();
