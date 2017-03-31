@@ -63,14 +63,14 @@ public class Net {
     }
 
     public interface NetServerce {
-        @GET("getToken")
+        @GET(Value.URL_GETTOKEN)
         Call<TokenBean> getToken();
 
-        @GET("login")
+        @GET(Value.URL_LOGIN)
         Observable<Users> login(@QueryMap Map<String,String> options);
 
         @FormUrlEncoded
-        @POST("register")
+        @POST(Value.URL_REGISTER)
         Observable<Users> register(@FieldMap Map<String,String> options);
 
         @GET("joinTeam")

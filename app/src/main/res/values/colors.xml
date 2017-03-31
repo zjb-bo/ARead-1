@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="loginGreen">#2ac87d</color>
+    <color name="orangeUser">#d1b803</color>
+    <color name="orangeUserPhone">#f6d702</color>
+    <color name="white">#fff</color>
 </resources>

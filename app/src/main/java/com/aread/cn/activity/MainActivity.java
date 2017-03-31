@@ -18,6 +18,7 @@ public class MainActivity extends BaseActivity{
 
 
 
+
 //      Umeng必须做的回调
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {

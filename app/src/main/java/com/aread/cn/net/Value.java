@@ -14,4 +14,7 @@ public class Value {
 
     //网络请求的URL
     public static final String NET_URL_BASE = "http://www.iwhere.com/kuaibao/ttx/yk/";
+    public static final String URL_GETTOKEN = "getToken";
+    public static final String URL_LOGIN = "login";
+    public static final String URL_REGISTER = "register";
 }

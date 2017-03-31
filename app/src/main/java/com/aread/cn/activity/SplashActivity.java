@@ -27,7 +27,7 @@ public class SplashActivity extends BaseActivity {
     protected void initData() {
         splashBinding = (ActivitySplashBinding) viewDataBinding;
         final List<ImageView> list = new ArrayList<>();
-        int[] idArray = new int[]{R.mipmap.first,R.mipmap.seccond,R.mipmap.third,R.mipmap.guid};
+        int[] idArray = new int[]{R.mipmap.first,R.mipmap.seccond,R.mipmap.third,R.mipmap.guid,R.mipmap.login};
         for (int i = 0; i < idArray.length; i++) {
             ImageView imageView = new ImageView(this);
             imageView.setBackgroundResource(idArray[i]);

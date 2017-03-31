@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">极录</string>
+    <string name="inputPhone">请输入手机号码</string>
+    <string name="guanguang">其实，我只是想逛逛</string>
+    <string name="yinsi">进入应用将代表您 同意极录隐私条款</string>
+    <string name="go">走你</string>
 </resources>

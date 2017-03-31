@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginGreen"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <LinearLayout
+        style="@style/Loginll"
+        android:layout_weight="0.9">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:gravity="center|bottom"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="26sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Loginll"
+        android:layout_marginTop="20dp"
+        android:layout_weight="0.8"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/dimen50dp"
+            android:layout_height="@dimen/dimen50dp"
+            android:background="@color/orangeUser"
+            android:padding="10dp"
+            android:src="@mipmap/login_phone" />
+
+        <EditText
+            android:id="@+id/edit_phone"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dimen50dp"
+            android:layout_weight="1"
+            android:background="@color/orangeUserPhone"
+            android:hint="@string/inputPhone"
+            android:paddingLeft="10dp"
+            android:textColor="@color/white"
+            android:inputType="phone"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/login_go"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dimen50dp"
+            android:background="@color/orangeUserPhone"
+            android:gravity="center"
+            android:padding="@dimen/dimen5dp"
+            android:text="@string/go"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/guanguang"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/white" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        style="@style/Loginll"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/login_weixin"
+            style="@style/loginImage"
+            android:src="@mipmap/weixin_icon" />
+
+        <ImageView
+            android:id="@+id/login_weibo"
+            style="@style/loginImage"
+            android:src="@mipmap/weibo_icon" />
+
+        <ImageView
+            android:id="@+id/login_qq"
+            style="@style/loginImage"
+            android:src="@mipmap/qq_icon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/yinsi"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>
+</layout>
