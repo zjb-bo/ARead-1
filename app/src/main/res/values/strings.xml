@@ -4,4 +4,7 @@
     <string name="guanguang">其实，我只是想逛逛</string>
     <string name="yinsi">进入应用将代表您 同意极录隐私条款</string>
     <string name="go">走你</string>
+    <string name="errorPhone">亲，你是不是乱写的号码</string>
+    <string name="netRun">网络快飞~~</string>
+    <string name="inputVerCode">请输入验证码</string>
 </resources>

@@ -44,7 +44,7 @@ public class UmengLoginShareUtils {
      */
     public void shareOpen(String content){
         new ShareAction(context)
-                .withText("一念收集，定制您的人生流年！"+content)
+                .withText("生活那么美，一定有你想记录的！"+content)
                 .withMedia(new UMImage(context, R.mipmap.a_read_logo))
                 .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.SINA,SHARE_MEDIA.YNOTE,SHARE_MEDIA.EVERNOTE)
                 .setCallback(umShareListener)
