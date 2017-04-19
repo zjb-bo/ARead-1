@@ -11,11 +11,13 @@
 
         <TextView
             android:id="@+id/title_left"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:visibility="gone"
-            android:background="@mipmap/create_group"/>
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="返回"
+            />
 
         <TextView
             android:id="@+id/title_common"
