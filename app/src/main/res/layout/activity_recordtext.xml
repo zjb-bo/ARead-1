@@ -5,13 +5,122 @@
 
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/trslate_05000000"
+        >
 
-             
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
 
-    </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/recorder_page"
+                android:layout_marginTop="150dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/recorder_bg"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                >
+
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/a_read_logo"
+                    />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text="00:00"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:textColor="@color/loginGreen"
+                    android:text="@string/up_cancle"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="120dp"
+                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/cancel"
+                    android:layout_width="30dp"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/icon_zoom_close"/>
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        />
+
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="80dp"
+                        android:src="@mipmap/diary_audio_input_btn"
+                        android:id="@+id/img_recorder" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/sure"
+                    android:layout_width="30dp"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/image_select_photo_big"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <include layout="@layout/activity_common_title"/>
+
+        <TextView
+            android:id="@+id/text_banner"
+            android:layout_marginTop="150dp"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:text="@string/talk"/>
+
+    </RelativeLayout>
 
 </layout>

@@ -8,4 +8,6 @@
     <string name="netRun">网络快飞~~</string>
     <string name="inputVerCode">请输入验证码</string>
     <string name="life">生活这么美，你都干了啥...</string>
+    <string name="up_cancle">上滑取消</string>
+    <string name="talk">领导，随便说两句</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.aread.cn.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -42,6 +43,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.img_pic:
                 break;
             case R.id.img_recordvoice:
+                startActivity(new Intent(MainActivity.this,RecordTextAcivity.class));
                 break;
             case R.id.img_recordvideo:
                 break;
