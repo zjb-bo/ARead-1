@@ -1,5 +1,6 @@
 package com.aread.cn.activity;
 
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.view.MotionEvent;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
 import com.aread.cn.databinding.ActivityRecordtextBinding;
+import com.aread.cn.utils.MediaPlayerUtils;
 import com.aread.cn.utils.RecorderUtils;
 import com.aread.cn.utils.StringUtils;
 
@@ -31,6 +33,7 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
         recordtextBinding.imgRecorder.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if(!isRecorderNotPlay)return false;
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         showRecorderBanner(showRecorderPage);
@@ -93,10 +96,15 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.cancel:
+                RecorderUtils.cancleSaveRecoderFile();
                 break;
             case R.id.sure:
+                finish();
                 break;
             case R.id.img_recorder:
+                if(!isRecorderNotPlay){
+                    MediaPlayerUtils.mediaPlayerStart(RecorderUtils.send_sound_file.getAbsolutePath());
+                }
                 break;
         }
     }

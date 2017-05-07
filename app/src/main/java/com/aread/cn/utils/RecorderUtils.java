@@ -15,7 +15,7 @@ import java.util.Date;
 public class RecorderUtils {
 
     private static MediaRecorder recorder;
-    private static File send_sound_file;
+    public static File send_sound_file;
     private static final String recoderPath = Environment.getExternalStorageDirectory() + "/Aread/talk/send";
 
     // 开始录音
@@ -65,8 +65,10 @@ public class RecorderUtils {
     }
 
     //不保存录音文件
-//    public static void cancleSaveRecoderFile(){
-//        File file = new File(recoderPath);
-//
-//    }
+    public static void cancleSaveRecoderFile(){
+        if(send_sound_file != null && send_sound_file.isFile()){
+            send_sound_file.delete();
+        }
+    }
+
 }
