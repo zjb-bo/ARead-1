@@ -86,7 +86,7 @@
                         />
 
 
-                    <ImageView
+                    <com.aread.cn.view.MusicImageView
                         android:layout_width="60dp"
                         android:layout_height="80dp"
                         android:src="@mipmap/diary_audio_input_btn"

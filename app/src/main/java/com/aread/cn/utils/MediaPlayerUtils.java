@@ -10,10 +10,10 @@ import java.io.IOException;
  */
 
 public class MediaPlayerUtils {
-
+    private static MediaPlayer mediaPlayer;
     public static void mediaPlayerStart(String dataPath){
         if(TextUtils.isEmpty(dataPath))return;
-            MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(dataPath);
             mediaPlayer.prepareAsync();
@@ -33,5 +33,20 @@ public class MediaPlayerUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getMediaPlayProgress(){
+        String progress = null;
+        if(mediaPlayer == null)return progress;
+        try {
+            int currentPosition = mediaPlayer.getCurrentPosition();
+            int duration = 10000;
+            if(duration != 0 || duration != -1){
+                progress = (currentPosition/duration*100)+"";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return progress;
     }
 }

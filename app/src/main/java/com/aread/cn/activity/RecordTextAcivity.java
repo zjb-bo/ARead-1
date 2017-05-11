@@ -1,8 +1,8 @@
 package com.aread.cn.activity;
 
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -79,14 +79,14 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
             isRecorderNotPlay = true;
             recordtextBinding.textBanner.setVisibility(View.INVISIBLE);
             recordtextBinding.recorderPage.setVisibility(View.VISIBLE);
-            recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
+//            recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
             RecorderUtils.start_record();
             startRecorderCount();
         }else if(show == showRecorderText){
             isRecorderNotPlay = false;
             recordtextBinding.textBanner.setVisibility(View.VISIBLE);
             recordtextBinding.recorderPage.setVisibility(View.INVISIBLE);
-            recordtextBinding.imgRecorder.setImageResource(R.mipmap.btn_play);
+//            recordtextBinding.imgRecorder.setImageResource(R.mipmap.btn_play);
             RecorderUtils.stop_record();
             stopRecorderCount();
         }
@@ -96,16 +96,35 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.cancel:
+                isRecorderNotPlay = true;
+//                recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
                 RecorderUtils.cancleSaveRecoderFile();
+                RecorderUtils.stop_record();
                 break;
             case R.id.sure:
                 finish();
                 break;
             case R.id.img_recorder:
                 if(!isRecorderNotPlay){
-                    MediaPlayerUtils.mediaPlayerStart(RecorderUtils.send_sound_file.getAbsolutePath());
+                    playRecorder();
                 }
                 break;
         }
+    }
+
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            String mediaPlayProgress = MediaPlayerUtils.getMediaPlayProgress();
+            if(TextUtils.isEmpty(mediaPlayProgress))return;
+            recordtextBinding.imgRecorder.setCurrentProgress(new Float(mediaPlayProgress));
+            handler.sendEmptyMessageDelayed(0,100);
+        }
+    };
+    private void playRecorder(){
+        MediaPlayerUtils.mediaPlayerStart(RecorderUtils.send_sound_file.getAbsolutePath());
+        recordtextBinding.imgRecorder.setAllProgress(100);
+        handler.sendEmptyMessageDelayed(0,100);
     }
 }

@@ -20,6 +20,7 @@ public class SplashActivity extends BaseActivity {
     private ActivitySplashBinding splashBinding;
     @Override
     protected int setView() {
+
         return R.layout.activity_splash;
     }
 
