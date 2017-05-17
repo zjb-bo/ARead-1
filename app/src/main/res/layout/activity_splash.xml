@@ -40,13 +40,12 @@
 
             <android.support.design.widget.NavigationView
                 android:id="@+id/drawerView"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/w420dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:fitsSystemWindows="true"
-                app:headerLayout="@layout/activity_login"
-                app:menu="@menu/main">
-
+                app:headerLayout="@layout/item_navigation"
+                app:menu="@menu/item_natigation">
             </android.support.design.widget.NavigationView>
 
         </android.support.v4.widget.DrawerLayout>
