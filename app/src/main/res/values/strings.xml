@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">极录</string>
+    <string name="app_name_en">A-READ</string>
     <string name="inputPhone">请输入手机号码</string>
     <string name="guanguang">其实，我只是想逛逛</string>
     <string name="yinsi">进入应用将代表您 同意极录服务及隐私条款</string>
@@ -10,4 +11,6 @@
     <string name="life">生活这么美，你都干了啥...</string>
     <string name="up_cancle">上滑取消</string>
     <string name="talk">领导，随便说两句</string>
+    <string name="draver_open">open</string>
+    <string name="draver_close">close</string>
 </resources>
