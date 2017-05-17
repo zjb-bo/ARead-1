@@ -118,13 +118,13 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
         public void handleMessage(Message msg) {
             String mediaPlayProgress = MediaPlayerUtils.getMediaPlayProgress();
             if(TextUtils.isEmpty(mediaPlayProgress))return;
-            recordtextBinding.imgRecorder.setCurrentProgress(new Float(mediaPlayProgress));
+//            recordtextBinding.imgRecorder.setCurrentProgress(new Float(mediaPlayProgress));
             handler.sendEmptyMessageDelayed(0,100);
         }
     };
     private void playRecorder(){
         MediaPlayerUtils.mediaPlayerStart(RecorderUtils.send_sound_file.getAbsolutePath());
-        recordtextBinding.imgRecorder.setAllProgress(100);
+//        recordtextBinding.imgRecorder.setAllProgress(100);
         handler.sendEmptyMessageDelayed(0,100);
     }
 }
