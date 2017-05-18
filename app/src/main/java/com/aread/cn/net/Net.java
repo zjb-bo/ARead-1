@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.aread.cn.base.BaseApplication;
 import com.aread.cn.bean.JoinTeamBean;
+import com.aread.cn.bean.RxBus;
+import com.aread.cn.bean.RxBusWeatherInfoBean;
 import com.aread.cn.bean.TokenBean;
 import com.aread.cn.bean.Users;
 import com.aread.cn.bean.WeatherInfoBean;
@@ -220,6 +222,11 @@ public class Net {
                     @Override
                     public void onNext(WeatherInfoBean weatherInfoBean) {
                         LogUtils.e("getWeatherInfo成功："+weatherInfoBean.toString());
+                        if(weatherInfoBean == null){
+                            LogUtils.e("getWeatherInfo成功：weatherInfoBean==null");
+                            return;
+                        }
+                        RxBus.getInstance().post(new RxBusWeatherInfoBean(weatherInfoBean));
                     }
                 });
         logCompletedUrl(map,Value.URL_BAIDU_WEATHER);

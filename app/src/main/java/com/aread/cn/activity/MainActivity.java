@@ -11,11 +11,14 @@ import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
 import com.aread.cn.bean.PopupWindowIdBean;
 import com.aread.cn.bean.RxBus;
+import com.aread.cn.bean.RxBusWeatherInfoBean;
+import com.aread.cn.bean.WeatherInfoBean;
 import com.aread.cn.databinding.ActivityMainBinding;
 import com.aread.cn.utils.GaoDeMapUtils;
 import com.aread.cn.utils.LogUtils;
 import com.aread.cn.utils.StringUtils;
 import com.aread.cn.view.CustomPopupWindow;
+import com.aread.cn.view.WheatherDetialDialog;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -24,7 +27,10 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding mainBinding;
     private GaoDeMapUtils gaoDeMapUtils;
     private CustomPopupWindow customPopupWindow;
-    private Subscription subscribe;
+    private Subscription subscribePopupWindowId;
+    private Subscription subscribeWeatherInfoBean;
+    private WeatherInfoBean weatherInfoBean;
+    private WheatherDetialDialog wheatherDetialDialog;
 
     @Override
     protected int setView() {
@@ -40,11 +46,18 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initRxBus() {
-        subscribe = RxBus.getInstance().toObserverable(PopupWindowIdBean.class)
+        subscribePopupWindowId = RxBus.getInstance().toObserverable(PopupWindowIdBean.class)
                 .subscribe(new Action1<PopupWindowIdBean>() {
                     @Override
                     public void call(PopupWindowIdBean popupWindowIdBean) {
                         LogUtils.e("zjb---->initRxBus：点击了id:"+popupWindowIdBean.getViewId());
+                    }
+                });
+        subscribeWeatherInfoBean = RxBus.getInstance().toObserverable(RxBusWeatherInfoBean.class)
+                .subscribe(new Action1<RxBusWeatherInfoBean>() {
+                    @Override
+                    public void call(RxBusWeatherInfoBean rxBusWeatherInfoBean) {
+                        weatherInfoBean = rxBusWeatherInfoBean.getWeatherInfoBean();
                     }
                 });
     }
@@ -94,6 +107,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void refreshWeatherInfo() {
+        showWeatherDialog();
         if(!StringUtils.noOperateInMs(5*60*1000)){//需要间隔5分钟以上才能获取一次天气
             LogUtils.e("zjb---->不好意思，获取天气太频繁！");
             return;
@@ -104,6 +118,14 @@ public class MainActivity extends BaseActivity {
         gaoDeMapUtils.startLocation();
     }
 
+    private void showWeatherDialog(){
+
+        if(wheatherDetialDialog == null){
+            wheatherDetialDialog = new WheatherDetialDialog(this);
+        }
+        wheatherDetialDialog.initData(weatherInfoBean);
+        wheatherDetialDialog.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,8 +135,11 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if(subscribe != null && !subscribe.isUnsubscribed()){
-            subscribe.unsubscribe();
+        if(subscribePopupWindowId != null && !subscribePopupWindowId.isUnsubscribed()){
+            subscribePopupWindowId.unsubscribe();
+        }
+        if(subscribeWeatherInfoBean != null && !subscribeWeatherInfoBean.isUnsubscribed()){
+            subscribeWeatherInfoBean.unsubscribe();
         }
         if(gaoDeMapUtils != null){
             gaoDeMapUtils.destroyLocaiton();
