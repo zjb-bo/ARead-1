@@ -17,4 +17,6 @@
     <string name="tupian">发图片</string>
     <string name="shipin">小视频</string>
     <string name="luyin">极录音</string>
+    <string name="back">返回</string>
+    <string name="save">保存</string>
 </resources>

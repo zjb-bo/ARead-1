@@ -67,12 +67,13 @@ public class WheatherDetialDialog extends Dialog implements View.OnClickListener
 	}
 
 	public void initData(WeatherInfoBean data){
-		tvNowDate.setText(StringUtils.getWheatherTimeStampDay() +""+StringUtils.getXingqi());
 		if(data ==null)return;
 		WeatherInfoBean.ShowapiResBodyBean.NowBean now = data.getShowapi_res_body().getNow();
 		WeatherInfoBean.ShowapiResBodyBean.NowBean.AqiDetailBean aqiDetail = data.getShowapi_res_body().getNow().getAqiDetail();
 		String area = aqiDetail.getArea();
 		String pm2_5 = aqiDetail.getPm2_5()+"";
+		tvNowDate.setText(StringUtils.getWheatherTimeStampDay() +""+StringUtils.getXingqi()+" "
+				+now.getTemperature_time());
 		tvNowCity.setText(area+"市");
 		tvNowPM25.setText(pm2_5);
 		Glide.with(mContext).load(now.getWeather_pic()).asBitmap().into(nowWeatherPic);

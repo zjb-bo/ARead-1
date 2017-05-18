@@ -27,13 +27,15 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void initData() {
         recordtextBinding = (ActivityRecordtextBinding) viewDataBinding;
-        recordtextBinding.cancel.setOnClickListener(this);
-        recordtextBinding.sure.setOnClickListener(this);
+//        recordtextBinding.cancel.setOnClickListener(this);
+//        recordtextBinding.sure.setOnClickListener(this);
         recordtextBinding.imgRecorder.setOnClickListener(this);
+        recordtextBinding.play.setOnClickListener(this);
+        recordtextBinding.title.titleLeft.setOnClickListener(this);
+        recordtextBinding.title.titleRight.setOnClickListener(this);
         recordtextBinding.imgRecorder.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(!isRecorderNotPlay)return false;
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
                         showRecorderBanner(showRecorderPage);
@@ -63,12 +65,14 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     };
 
     private void startRecorderCount(){
+        recordtextBinding.time.setText("00:00");
         mHandler.sendEmptyMessageDelayed(0,0);
     }
 
     private void stopRecorderCount(){
         mHandler.removeMessages(0);
         recorderTimeCount = 0;
+
     }
 
 
@@ -77,15 +81,15 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     private void showRecorderBanner(int show){
         if(show == showRecorderPage){
             isRecorderNotPlay = true;
-            recordtextBinding.textBanner.setVisibility(View.INVISIBLE);
-            recordtextBinding.recorderPage.setVisibility(View.VISIBLE);
+//            recordtextBinding.textBanner.setVisibility(View.INVISIBLE);
+//            recordtextBinding.recorderPage.setVisibility(View.VISIBLE);
 //            recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
             RecorderUtils.start_record();
             startRecorderCount();
         }else if(show == showRecorderText){
             isRecorderNotPlay = false;
-            recordtextBinding.textBanner.setVisibility(View.VISIBLE);
-            recordtextBinding.recorderPage.setVisibility(View.INVISIBLE);
+//            recordtextBinding.textBanner.setVisibility(View.VISIBLE);
+//            recordtextBinding.recorderPage.setVisibility(View.INVISIBLE);
 //            recordtextBinding.imgRecorder.setImageResource(R.mipmap.btn_play);
             RecorderUtils.stop_record();
             stopRecorderCount();
@@ -95,19 +99,23 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.cancel:
-                isRecorderNotPlay = true;
-//                recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
-                RecorderUtils.cancleSaveRecoderFile();
-                RecorderUtils.stop_record();
+//            case R.id.cancel:
+//                isRecorderNotPlay = true;
+////                recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
+//                RecorderUtils.cancleSaveRecoderFile();
+//                RecorderUtils.stop_record();
+//                break;
+//            case R.id.sure:
+//                finish();
+//                break;
+            case R.id.play:
+                    playRecorder();
                 break;
-            case R.id.sure:
+            case R.id.title_left:
+                RecorderUtils.cancleSaveRecoderFile();
                 finish();
                 break;
-            case R.id.img_recorder:
-                if(!isRecorderNotPlay){
-                    playRecorder();
-                }
+            case R.id.title_Right:
                 break;
         }
     }
@@ -119,6 +127,7 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
             String mediaPlayProgress = MediaPlayerUtils.getMediaPlayProgress();
             if(TextUtils.isEmpty(mediaPlayProgress))return;
 //            recordtextBinding.imgRecorder.setCurrentProgress(new Float(mediaPlayProgress));
+            recordtextBinding.progressBar.setProgress(Integer.parseInt(mediaPlayProgress));
             handler.sendEmptyMessageDelayed(0,100);
         }
     };
