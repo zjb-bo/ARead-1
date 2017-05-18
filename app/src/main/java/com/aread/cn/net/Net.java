@@ -1,18 +1,23 @@
 package com.aread.cn.net;
 
 import android.content.Context;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import com.aread.cn.base.BaseApplication;
 import com.aread.cn.bean.JoinTeamBean;
 import com.aread.cn.bean.TokenBean;
 import com.aread.cn.bean.Users;
+import com.aread.cn.bean.WeatherInfoBean;
 import com.aread.cn.utils.Contants;
+import com.aread.cn.utils.LogUtils;
 import com.aread.cn.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -78,6 +84,10 @@ public class Net {
 
         @GET("joinTeam")
         Observable<JoinTeamBean> jionTeamObsever(@QueryMap Map<String,String> options);
+
+        @Headers("Authorization:APPCODE d8c31866282647d8bcdbccd860016d0d")
+        @GET(Value.URL_BAIDU_WEATHER)
+        Observable<WeatherInfoBean> refreshWeatherInfo(@QueryMap Map<String,String> options);
 
     }
 
@@ -183,6 +193,51 @@ public class Net {
                 Log.e("zjb", "onNext: "+joinTeamBean.toString());
             }
         });
+    }
+
+    public void getWeatherInfo(String area){
+        Map<String,String> map = new ArrayMap<>();
+//        map.put("output","json");
+//        map.put("ak",Value.URL_BAIDU_APPKEY);
+//        map.put("location",area);
+//        map.put("mcode",Value.URL_BAIDU_SHA1);
+        map.put("ip", "171.213.60.21");
+        map.put("area", area);
+        Observable<WeatherInfoBean> weatherInfoBeanObservable = mNetServerce.refreshWeatherInfo(map);
+        weatherInfoBeanObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<WeatherInfoBean>() {
+                    @Override
+                    public void onCompleted() {
+                        LogUtils.e("getWeatherInfo完成");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtils.e("getWeatherInfo失败："+e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(WeatherInfoBean weatherInfoBean) {
+                        LogUtils.e("getWeatherInfo成功："+weatherInfoBean.toString());
+                    }
+                });
+        logCompletedUrl(map,Value.URL_BAIDU_WEATHER);
+    }
+
+
+    private String logCompletedUrl(Map<String,String> map,String url){
+        StringBuffer str = new StringBuffer();
+        if(map == null)return str.toString();
+        str.append(url);
+        Set<Map.Entry<String, String>> entries = map.entrySet();
+        Iterator<Map.Entry<String, String>> iterator = entries.iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, String> next = iterator.next();
+            str.append(next.getKey()).append("=").append(next.getValue()).append("&");
+        }
+        LogUtils.e("zjb--->完整的请求URL："+str.toString());
+        return str.toString();
     }
 
 }

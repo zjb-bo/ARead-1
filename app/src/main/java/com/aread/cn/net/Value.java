@@ -17,4 +17,7 @@ public class Value {
     public static final String URL_GETTOKEN = "getToken";
     public static final String URL_LOGIN = "login";
     public static final String URL_REGISTER = "register";
+    public static final String URL_BAIDU_WEATHER = "http://ali-weather.showapi.com/area-to-weather?"; //百度天气接口
+    public static final String URL_BAIDU_APPKEY = "U92xK4IW3UiikoRG5zC0GF9wuno0Ga0V";//百度APPkey
+    public static final String URL_BAIDU_SHA1 = "D9:3F:67:77:5A:26:E9:0D:65:63:86:25:DD:BA:3A:95:E3:13:40:AC";//百度APPkey
 }

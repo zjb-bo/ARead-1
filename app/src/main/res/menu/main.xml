@@ -4,6 +4,13 @@
     tools:context=".MainActivity" >
 
     <item
+        android:id="@+id/btn_weather"
+        android:icon="@mipmap/icon_weather"
+        app:showAsAction="always"
+        android:title="天气"
+        />
+
+    <item
         android:id="@+id/action_compose"
         android:icon="@mipmap/btn_post_gallery_normal"
         app:showAsAction="never"

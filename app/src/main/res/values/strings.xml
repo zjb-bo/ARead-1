@@ -13,4 +13,8 @@
     <string name="talk">领导，随便说两句</string>
     <string name="draver_open">open</string>
     <string name="draver_close">close</string>
+    <string name="wenzi">发文字</string>
+    <string name="tupian">发图片</string>
+    <string name="shipin">小视频</string>
+    <string name="luyin">极录音</string>
 </resources>

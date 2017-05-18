@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/recorder_bg"
+    android:gravity="center">
+
+    <LinearLayout
+        android:id="@+id/send_text"
+        style="@style/PopupWindFramLayout"
+        >
+        <ImageView
+            style="@style/PopupWindImageView"
+            android:background="@mipmap/btn_post_timehut_diary_normal"
+            />
+        <TextView
+            style="@style/PopupWindText"
+            android:text="@string/wenzi"
+             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/send_recorder"
+        android:layout_toRightOf="@id/send_text"
+        style="@style/PopupWindFramLayout"
+        >
+        <ImageView
+            android:background="@mipmap/btn_photo_share_gram"
+            style="@style/PopupWindImageView"
+            />
+        <TextView
+            style="@style/PopupWindText"
+            android:text="@string/luyin"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/send_text"
+        android:id="@+id/send_img"
+        style="@style/PopupWindFramLayout"
+        >
+        <ImageView
+            android:background="@mipmap/btn_post_timehut_cap_normal"
+            style="@style/PopupWindImageView"
+            />
+        <TextView
+            style="@style/PopupWindText"
+            android:text="@string/tupian"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/send_video"
+        android:layout_toRightOf="@id/send_text"
+        android:layout_below="@id/send_text"
+        style="@style/PopupWindFramLayout"
+        >
+        <ImageView
+            android:background="@mipmap/btn_post_gallery_normal"
+            style="@style/PopupWindImageView"
+            />
+        <TextView
+            style="@style/PopupWindText"
+            android:text="@string/shipin"
+            />
+    </LinearLayout>
+
+
+</RelativeLayout>

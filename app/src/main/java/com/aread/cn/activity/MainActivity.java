@@ -1,15 +1,30 @@
 package com.aread.cn.activity;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
+import com.aread.cn.bean.PopupWindowIdBean;
+import com.aread.cn.bean.RxBus;
 import com.aread.cn.databinding.ActivityMainBinding;
+import com.aread.cn.utils.GaoDeMapUtils;
+import com.aread.cn.utils.LogUtils;
+import com.aread.cn.utils.StringUtils;
+import com.aread.cn.view.CustomPopupWindow;
+
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class MainActivity extends BaseActivity {
     private ActivityMainBinding mainBinding;
+    private GaoDeMapUtils gaoDeMapUtils;
+    private CustomPopupWindow customPopupWindow;
+    private Subscription subscribe;
 
     @Override
     protected int setView() {
@@ -20,15 +35,29 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         mainBinding = (ActivityMainBinding) viewDataBinding;
         initToolBar();
-//        mainBinding.floatBar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Snackbar make = Snackbar.make(v, "老大，断网了，快叫网管~~", Snackbar.LENGTH_SHORT);
-//                View view = make.getView();
-//                view.setBackgroundColor(Color.rgb(0x2a,0xc8,0x7d));
-//                make.show();
-//            }
-//        });
+        initFloatBtn();
+        initRxBus();
+    }
+
+    private void initRxBus() {
+        subscribe = RxBus.getInstance().toObserverable(PopupWindowIdBean.class)
+                .subscribe(new Action1<PopupWindowIdBean>() {
+                    @Override
+                    public void call(PopupWindowIdBean popupWindowIdBean) {
+                        LogUtils.e("zjb---->initRxBus：点击了id:"+popupWindowIdBean.getViewId());
+                    }
+                });
+    }
+
+    private void initFloatBtn() {
+        FloatingActionButton floatBtn = mainBinding.floatBtn;
+        floatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.e("zjb--->MainActivity:floatBtn被点击了");
+                showPopupWindow(v);
+            }
+        });
     }
 
     private void initToolBar() {
@@ -42,8 +71,56 @@ public class MainActivity extends BaseActivity {
                 new ActionBarDrawerToggle(this, mainBinding.drawerViewLayout, toolbar, R.string.draver_open, R.string.draver_close);
         actionBarDrawerToggle.syncState();
         mainBinding.drawerViewLayout.addDrawerListener(actionBarDrawerToggle);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mainBinding.drawerViewLayout.closeDrawers();
+                switch (item.getItemId()){
+                    case R.id.btn_weather:
+                        refreshWeatherInfo();
+                        LogUtils.e("zjb--->onMenuItemClick:点击了导航栏天气");
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
+    private void showPopupWindow(View parent) {
+        if (customPopupWindow == null) {
+            customPopupWindow = new CustomPopupWindow(this);
+        }
+        customPopupWindow.showPopupWindow(parent);
+    }
+
+    private void refreshWeatherInfo() {
+        if(!StringUtils.noOperateInMs(5*60*1000)){//需要间隔5分钟以上才能获取一次天气
+            LogUtils.e("zjb---->不好意思，获取天气太频繁！");
+            return;
+        }
+        if(gaoDeMapUtils == null){
+            gaoDeMapUtils = new GaoDeMapUtils();
+        }
+        gaoDeMapUtils.startLocation();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(subscribe != null && !subscribe.isUnsubscribed()){
+            subscribe.unsubscribe();
+        }
+        if(gaoDeMapUtils != null){
+            gaoDeMapUtils.destroyLocaiton();
+        }
+        super.onDestroy();
+    }
 
     //      Umeng分享必须做的回调
 //    @Override
@@ -51,9 +128,4 @@ public class MainActivity extends BaseActivity {
 //        super.onActivityResult(requestCode, resultCode, data);
 //        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
 //    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 }

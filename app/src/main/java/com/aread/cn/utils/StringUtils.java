@@ -17,7 +17,23 @@ public class StringUtils {
         }else {
             time = count/60+":"+count%60/10+count%60%10;
         }
-
         return time;
+    }
+
+    /**
+     * 多少毫秒内不能进行操作
+     * @param ms
+     * @return
+     */
+    private static long currentMs = 0;
+    public static boolean noOperateInMs(int ms){
+        boolean isOvered = false;
+        if(System.currentTimeMillis() - currentMs > ms){
+            isOvered = true;
+        }else {
+            isOvered = false;
+        }
+        currentMs = System.currentTimeMillis();
+        return isOvered;
     }
 }
