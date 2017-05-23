@@ -17,7 +17,6 @@ import com.aread.cn.bean.WeatherInfoBean;
 import com.aread.cn.databinding.ActivityMainBinding;
 import com.aread.cn.utils.GaoDeMapUtils;
 import com.aread.cn.utils.LogUtils;
-import com.aread.cn.utils.RecorderUtils;
 import com.aread.cn.utils.StringUtils;
 import com.aread.cn.view.CustomPopupWindow;
 import com.aread.cn.view.WheatherDetialDialog;
@@ -45,7 +44,6 @@ public class MainActivity extends BaseActivity {
         initToolBar();
         initFloatBtn();
         initRxBus();
-        refreshWeatherInfo();
     }
 
     private void initRxBus() {
@@ -62,6 +60,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void call(RxBusWeatherInfoBean rxBusWeatherInfoBean) {
                         weatherInfoBean = rxBusWeatherInfoBean.getWeatherInfoBean();
+                        wheatherDetialDialog.initData(weatherInfoBean);
                     }
                 });
     }

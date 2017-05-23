@@ -96,10 +96,11 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="@dimen/w15dp"
+                android:layout_height="@dimen/w12dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/w16dp"
                 android:layout_marginRight="@dimen/w16dp"
+                android:max="10000"
                 android:progressDrawable="@drawable/progressbar"
                 android:id="@+id/progressBar" />
             <TextView

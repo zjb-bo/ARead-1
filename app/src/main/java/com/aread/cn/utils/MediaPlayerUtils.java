@@ -35,14 +35,15 @@ public class MediaPlayerUtils {
         }
     }
 
-    public static String getMediaPlayProgress(){
-        String progress = null;
+    public static int getMediaPlayProgress(){
+        int progress = 0;
         if(mediaPlayer == null)return progress;
         try {
             int currentPosition = mediaPlayer.getCurrentPosition();
-            int duration = 10000;
+            int duration = mediaPlayer.getDuration();
+            LogUtils.e("zjb--->getMediaPlayProgress:"+currentPosition+" duration:"+duration);
             if(duration != 0 || duration != -1){
-                progress = (currentPosition/duration*100)+"";
+                progress = currentPosition*10000/duration;
             }
         }catch (Exception e){
             e.printStackTrace();

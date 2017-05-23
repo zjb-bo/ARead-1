@@ -2,13 +2,13 @@ package com.aread.cn.activity;
 
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
 import com.aread.cn.databinding.ActivityRecordtextBinding;
+import com.aread.cn.utils.LogUtils;
 import com.aread.cn.utils.MediaPlayerUtils;
 import com.aread.cn.utils.RecorderUtils;
 import com.aread.cn.utils.StringUtils;
@@ -27,8 +27,6 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void initData() {
         recordtextBinding = (ActivityRecordtextBinding) viewDataBinding;
-//        recordtextBinding.cancel.setOnClickListener(this);
-//        recordtextBinding.sure.setOnClickListener(this);
         recordtextBinding.imgRecorder.setOnClickListener(this);
         recordtextBinding.play.setOnClickListener(this);
         recordtextBinding.title.titleLeft.setOnClickListener(this);
@@ -70,9 +68,9 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     }
 
     private void stopRecorderCount(){
-        mHandler.removeMessages(0);
+        progressTime  = recorderTimeCount;
         recorderTimeCount = 0;
-
+        mHandler.removeMessages(0);
     }
 
 
@@ -81,16 +79,10 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     private void showRecorderBanner(int show){
         if(show == showRecorderPage){
             isRecorderNotPlay = true;
-//            recordtextBinding.textBanner.setVisibility(View.INVISIBLE);
-//            recordtextBinding.recorderPage.setVisibility(View.VISIBLE);
-//            recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
             RecorderUtils.start_record();
             startRecorderCount();
         }else if(show == showRecorderText){
             isRecorderNotPlay = false;
-//            recordtextBinding.textBanner.setVisibility(View.VISIBLE);
-//            recordtextBinding.recorderPage.setVisibility(View.INVISIBLE);
-//            recordtextBinding.imgRecorder.setImageResource(R.mipmap.btn_play);
             RecorderUtils.stop_record();
             stopRecorderCount();
         }
@@ -99,15 +91,6 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-//            case R.id.cancel:
-//                isRecorderNotPlay = true;
-////                recordtextBinding.imgRecorder.setImageResource(R.mipmap.diary_audio_input_btn);
-//                RecorderUtils.cancleSaveRecoderFile();
-//                RecorderUtils.stop_record();
-//                break;
-//            case R.id.sure:
-//                finish();
-//                break;
             case R.id.play:
                     playRecorder();
                 break;
@@ -121,19 +104,27 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
     }
 
 
+    private int progressTime = 0;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            String mediaPlayProgress = MediaPlayerUtils.getMediaPlayProgress();
-            if(TextUtils.isEmpty(mediaPlayProgress))return;
-//            recordtextBinding.imgRecorder.setCurrentProgress(new Float(mediaPlayProgress));
-            recordtextBinding.progressBar.setProgress(Integer.parseInt(mediaPlayProgress));
-            handler.sendEmptyMessageDelayed(0,100);
+            int mediaPlayProgress = MediaPlayerUtils.getMediaPlayProgress();
+            mHandler.removeMessages(0);
+            handler.sendEmptyMessageDelayed(0,50);
+            if(mediaPlayProgress == 0)return;
+            LogUtils.e("zjb--->playRecorder:"+mediaPlayProgress);
+            recordtextBinding.progressBar.setProgress(mediaPlayProgress);
         }
     };
     private void playRecorder(){
+        if(RecorderUtils.send_sound_file == null)return;
         MediaPlayerUtils.mediaPlayerStart(RecorderUtils.send_sound_file.getAbsolutePath());
-//        recordtextBinding.imgRecorder.setAllProgress(100);
-        handler.sendEmptyMessageDelayed(0,100);
+        handler.sendEmptyMessageDelayed(0,50);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        RecorderUtils.cancleSaveRecoderFile();
     }
 }
