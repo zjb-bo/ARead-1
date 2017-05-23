@@ -116,6 +116,8 @@ public class RecordTextAcivity extends BaseActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.title_Right:
+                //发送item到Mainactivity
+                finish();
                 break;
         }
     }

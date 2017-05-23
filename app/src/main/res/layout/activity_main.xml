@@ -40,8 +40,8 @@
                     android:id="@+id/recycleView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/w16dp"
-                    android:layout_marginRight="@dimen/w16dp">
+                    android:layout_margin="@dimen/w16dp"
+                    >
                 </android.support.v7.widget.RecyclerView>
             </RelativeLayout>
 

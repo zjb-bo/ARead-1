@@ -3,14 +3,17 @@ package com.aread.cn.activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.aread.cn.R;
+import com.aread.cn.adapter.MainActivityRecycleViewAdapter;
 import com.aread.cn.base.BaseActivity;
 import com.aread.cn.bean.PopupWindowIdBean;
+import com.aread.cn.bean.RecordTextBean;
 import com.aread.cn.bean.RxBus;
 import com.aread.cn.bean.RxBusWeatherInfoBean;
 import com.aread.cn.bean.WeatherInfoBean;
@@ -21,6 +24,9 @@ import com.aread.cn.utils.RecorderUtils;
 import com.aread.cn.utils.StringUtils;
 import com.aread.cn.view.CustomPopupWindow;
 import com.aread.cn.view.WheatherDetialDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -33,6 +39,8 @@ public class MainActivity extends BaseActivity {
     private Subscription subscribeWeatherInfoBean;
     private WeatherInfoBean weatherInfoBean;
     private WheatherDetialDialog wheatherDetialDialog;
+    private MainActivityRecycleViewAdapter adapter;
+    private List<RecordTextBean> listDatas;
 
     @Override
     protected int setView() {
@@ -45,7 +53,17 @@ public class MainActivity extends BaseActivity {
         initToolBar();
         initFloatBtn();
         initRxBus();
-        refreshWeatherInfo();
+//        refreshWeatherInfo();
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        listDatas = new ArrayList<>();
+        listDatas.add(new RecordTextBean());
+        adapter = new MainActivityRecycleViewAdapter(this);
+        mainBinding.recycleView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        mainBinding.recycleView.setAdapter(adapter);
+        adapter.addDatas(listDatas);
     }
 
     private void initRxBus() {
