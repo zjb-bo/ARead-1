@@ -4,6 +4,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        
+
 
         <FrameLayout
             android:id="@+id/frameLayout"
@@ -25,7 +27,56 @@
             android:layout_height="@dimen/w80dp"
             android:background="@mipmap/btn_photo_share_gram_small"
             android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/w20dp"/>
+            android:layout_margin="@dimen/w10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w100dp"
+            android:padding="@dimen/w10dp"
+            android:orientation="horizontal"
+            >
+            <ImageView
+                android:id="@+id/flashLed"
+                android:layout_width="@dimen/w80dp"
+                android:layout_height="@dimen/w80dp"
+                android:background="@mipmap/qq_icon"/>
+
+            <LinearLayout
+                android:id="@+id/flashLed_ll"
+                android:layout_width="@dimen/w300dp"
+                android:layout_height="match_parent"
+                android:background="@color/loginGreen">
+                <TextView
+                    android:id="@+id/auto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/w26dp"
+                    android:text="自动"/>
+                <TextView
+                    android:id="@+id/open"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/w26dp"
+                    android:text="打开"/>
+                <TextView
+                    android:id="@+id/close"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/w26dp"
+                    android:text="关闭"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

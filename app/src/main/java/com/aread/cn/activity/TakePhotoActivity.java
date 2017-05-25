@@ -1,5 +1,6 @@
 package com.aread.cn.activity;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -11,7 +12,9 @@ import android.os.Environment;
 import android.text.format.DateFormat;
 import android.view.Surface;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.aread.cn.R;
@@ -37,6 +40,7 @@ public class TakePhotoActivity extends BaseActivity {
     private Camera mCamera;
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     private FrameLayout frameLayout;
+    private LinearLayout ll;
 
 
     @Override
@@ -59,6 +63,7 @@ public class TakePhotoActivity extends BaseActivity {
 
     private void initView() {
         frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
+        ll = (LinearLayout) findViewById(R.id.flashLed_ll);
         findViewById(R.id.takePhoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +86,13 @@ public class TakePhotoActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 switchCamera();
+            }
+        });
+        findViewById(R.id.flashLed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                switchCamera();
+                startValue(ll,"X",0,1);
             }
         });
     }
@@ -241,5 +253,27 @@ public class TakePhotoActivity extends BaseActivity {
             }
         });
         frameLayout.addView(canmeraSurfaceView);
+    }
+
+    /**
+     * 设置view的平移动画，可设置X或Y方向的平移
+     * @param view  要平移的view
+     */
+    public static void startValue(final View view,final String orientation,float from,float to){
+        ValueAnimator anim = ValueAnimator.ofFloat(from,to);
+        anim.setTarget(view);
+        anim.setDuration(2000);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.start();
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if (orientation.equals("y")) {
+                    view.setTranslationY((Float)animation.getAnimatedValue());
+                }else{
+                    view.setTranslationX((Float)animation.getAnimatedValue());
+                }
+            }
+        });
     }
 }
