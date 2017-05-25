@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aread.cn.R;
@@ -13,7 +12,6 @@ import com.aread.cn.bean.RecordTextBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by bobo on 2017/5/23.
@@ -38,14 +36,14 @@ public class MainActivityRecycleViewAdapter extends RecyclerView.Adapter<Recycle
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View inflate = inflater.inflate(R.layout.item_recyclerview_mainactivity, null);
+        View inflate = inflater.inflate(R.layout.item_recyclerview_main, parent,false);
         MyViewHolder myViewHolder = new MyViewHolder(inflate);
         return myViewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        MyViewHolder mHolder = (MyViewHolder) holder;
+//        MyViewHolder mHolder = (MyViewHolder) holder;
 //        try {
 //            RecordTextBean recordTextBean = datas.get(position);
 //            mHolder.time.setText(recordTextBean.getCreatTime());

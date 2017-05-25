@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+    </data>
+
+    <RelativeLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w250dp"
+            android:background="@color/loginGreen">
+        </FrameLayout>
+        <include layout="@layout/activity_common_title1"/>
+
+        <ImageView
+            android:id="@+id/user_img"
+            android:layout_width="@dimen/w150dp"
+            android:layout_height="@dimen/w150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/w150dp"
+            android:background="@mipmap/qq_icon"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w80dp"
+            android:layout_marginTop="@dimen/w350dp"
+            android:layout_marginLeft="@dimen/w24dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/w16dp"
+            android:layout_marginRight="@dimen/w24dp"
+            android:background="@drawable/recorder_bg"
+            android:textSize="@dimen/w24dp"
+            android:textColor="@color/white"
+            android:text="昵称：极录"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/w80dp"
+            android:layout_marginTop="@dimen/w500dp"
+            android:layout_marginLeft="@dimen/w24dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/w16dp"
+            android:layout_marginRight="@dimen/w24dp"
+            android:background="@drawable/recorder_bg"
+            android:textSize="@dimen/w24dp"
+            android:textColor="@color/white"
+            android:text="个签：人无远虑，必有近忧"/>
+
+    </RelativeLayout>
+
+</layout>
+

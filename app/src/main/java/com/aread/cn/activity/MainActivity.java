@@ -1,13 +1,17 @@
 package com.aread.cn.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aread.cn.R;
 import com.aread.cn.adapter.MainActivityRecycleViewAdapter;
@@ -20,7 +24,6 @@ import com.aread.cn.bean.WeatherInfoBean;
 import com.aread.cn.databinding.ActivityMainBinding;
 import com.aread.cn.utils.GaoDeMapUtils;
 import com.aread.cn.utils.LogUtils;
-import com.aread.cn.utils.RecorderUtils;
 import com.aread.cn.utils.StringUtils;
 import com.aread.cn.view.CustomPopupWindow;
 import com.aread.cn.view.WheatherDetialDialog;
@@ -41,6 +44,8 @@ public class MainActivity extends BaseActivity {
     private WheatherDetialDialog wheatherDetialDialog;
     private MainActivityRecycleViewAdapter adapter;
     private List<RecordTextBean> listDatas;
+    private ImageView userImg;
+    private TextView userNackName,userSign;
 
     @Override
     protected int setView() {
@@ -59,6 +64,7 @@ public class MainActivity extends BaseActivity {
 
     private void initRecyclerView() {
         listDatas = new ArrayList<>();
+        listDatas.add(new RecordTextBean());
         listDatas.add(new RecordTextBean());
         adapter = new MainActivityRecycleViewAdapter(this);
         mainBinding.recycleView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -79,6 +85,7 @@ public class MainActivity extends BaseActivity {
                 .subscribe(new Action1<RxBusWeatherInfoBean>() {
                     @Override
                     public void call(RxBusWeatherInfoBean rxBusWeatherInfoBean) {
+                        //获取到weatherInfo
                         weatherInfoBean = rxBusWeatherInfoBean.getWeatherInfoBean();
                     }
                 });
@@ -115,8 +122,37 @@ public class MainActivity extends BaseActivity {
                         refreshWeatherInfo();
                         LogUtils.e("zjb--->onMenuItemClick:点击了导航栏天气");
                         break;
+                    case R.id.action_compose:
+                        LogUtils.e("zjb--->onMenuItemClick:点击了导航栏编辑");
+                        break;
+                    case R.id.action_delete:
+                        LogUtils.e("zjb--->onMenuItemClick:点击了导航栏删除");
+                        break;
+                    case R.id.action_settings:
+                        LogUtils.e("zjb--->onMenuItemClick:点击了导航栏设置");
+                        break;
+
                 }
                 return true;
+            }
+        });
+        mainBinding.drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                LogUtils.e("zjb--->MenuItem:item.getItemId():"+item.getItemId());
+                LogUtils.e("zjb--->MenuItem:item.gettitle():"+item.getTitle());
+                item.setChecked(true);
+                return true;
+            }
+        });
+        View headerView = mainBinding.drawerView.getHeaderView(0);
+        userImg = (ImageView) headerView.findViewById(R.id.user_img);
+        userNackName = (TextView) headerView.findViewById(R.id.user_nackName);
+        userSign = (TextView) headerView.findViewById(R.id.user_sign);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,UserCenterActivity.class));
             }
         });
     }

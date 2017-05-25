@@ -26,6 +26,12 @@
     <uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
 
+    <!--相机权限，数据存储-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -39,7 +45,7 @@
             android:value="550cd34022b763b732ad82d11338a0ca"/>
         <service android:name="com.amap.api.location.APSService"></service>
 
-        <activity android:name=".activity.MainActivity"
+        <activity android:name=".activity.TakePhotoActivity"
             android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,6 +55,8 @@
         </activity>
         <activity android:name=".activity.LoginAcitity"/>
         <activity android:name=".activity.RecordTextAcivity"/>
+        <activity android:name=".activity.UserCenterActivity"/>
+        <!--<activity android:name=".activity.TakePhotoActivity"/>-->
 
         <activity android:name=".activity.SplashActivity"/>
         <!--以下是Umeng社会化组件集成的 三方分享和授权相关配置-->

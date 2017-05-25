@@ -63,7 +63,7 @@
             android:layout_marginLeft="@dimen/w16dp"
             android:layout_marginRight="@dimen/w16dp"
             android:layout_marginTop="@dimen/w70dp"
-            android:background="#555"
+            android:background="@color/white"
             />
 
 
