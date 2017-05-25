@@ -19,4 +19,5 @@
     <string name="luyin">极录音</string>
     <string name="back">返回</string>
     <string name="save">保存</string>
+    <string name="welcome">公告：欢迎光临极录APP，点击下方按钮，开始你的即刻录制吧！</string>
 </resources>
