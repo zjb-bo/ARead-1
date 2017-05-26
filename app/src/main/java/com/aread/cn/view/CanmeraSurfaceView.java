@@ -5,6 +5,9 @@ import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.FrameLayout;
+
+import com.aread.cn.utils.LogUtils;
 
 import java.io.IOException;
 
@@ -60,7 +63,30 @@ public class CanmeraSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
         try {
             mCamera.setPreviewDisplay(holder);
-            mCamera.startPreview();
+//            mCamera.startPreview();
+
+            //针对相机预览产生变形的处理
+            Camera.Parameters parameters = mCamera.getParameters();// 获得相机参数
+            Camera.Size s = parameters.getPreviewSize();
+            double w = s.width;
+            double h = s.height;
+
+            LogUtils.e("zjb--->getPreviewSize:s.width："+w+" s.height:"+h);
+            LogUtils.e("zjb--->getPreviewSize:surfacewidth："+width+" surfaceheight:"+height);
+
+            if( width>height )
+            {
+                this.setLayoutParams(new FrameLayout.LayoutParams(width, (int) (width*h/w)) );
+            }
+            else
+            {
+                this.setLayoutParams(new FrameLayout.LayoutParams((int) (height*h/w), height));
+            }
+//            parameters.setPreviewSize(width, height); // 设置预览图像大小
+//            parameters.setPictureFormat(PixelFormat.JPEG); // 设置照片格式
+//            mCamera.setParameters(parameters);// 设置相机参数
+
+            mCamera.startPreview();// 开始预览
         } catch (IOException e) {
             e.printStackTrace();
         }

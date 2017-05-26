@@ -10,9 +10,9 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/5/25.
@@ -41,6 +42,8 @@ public class TakePhotoActivity extends BaseActivity {
     private int mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
     private FrameLayout frameLayout;
     private LinearLayout ll;
+    private int flashLed = 0;
+    private DisplayMetrics dm;
 
 
     @Override
@@ -62,6 +65,12 @@ public class TakePhotoActivity extends BaseActivity {
     }
 
     private void initView() {
+
+        //屏幕尺寸
+//        dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);
+//        LogUtils.e("屏幕分辨率w:"+dm.widthPixels+" h:"+dm.heightPixels);
+
         frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
         ll = (LinearLayout) findViewById(R.id.flashLed_ll);
         findViewById(R.id.takePhoto).setOnClickListener(new View.OnClickListener() {
@@ -92,7 +101,16 @@ public class TakePhotoActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 //                switchCamera();
-                startValue(ll,"X",0,1);
+                ShowMsgUitls.showCenterToast("点击了闪光灯",Toast.LENGTH_SHORT);
+                int minWidth = ll.getWidth() * -1;
+                int maxWidth = ll.getWidth();
+                if(flashLed == 0){
+                    startValue(ll,"X",minWidth,0);
+                    flashLed = 1;
+                }else {
+                    startValue(ll,"X",0,minWidth);
+                    flashLed = 0;
+                }
             }
         });
     }
@@ -112,6 +130,11 @@ public class TakePhotoActivity extends BaseActivity {
         Camera c = null;
         try {
             c = Camera.open(mCameraId);
+//            Camera.Parameters parameters = mCamera.getParameters();
+//            List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+//            Camera.Size closelyPreSize = getCloselyPreSize(true, dm.widthPixels, dm.heightPixels, supportedPreviewSizes);
+//            parameters.setPreviewSize(closelyPreSize.width,closelyPreSize.height);
+//            mCamera.setParameters(parameters);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -260,11 +283,11 @@ public class TakePhotoActivity extends BaseActivity {
      * @param view  要平移的view
      */
     public static void startValue(final View view,final String orientation,float from,float to){
-        ValueAnimator anim = ValueAnimator.ofFloat(from,to);
+        final ValueAnimator anim = ValueAnimator.ofFloat(from,to);
         anim.setTarget(view);
-        anim.setDuration(2000);
-        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(200);
         anim.start();
+        view.setVisibility(View.VISIBLE);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -276,4 +299,62 @@ public class TakePhotoActivity extends BaseActivity {
             }
         });
     }
+
+    //拍照闪光灯
+//    1、自动闪光（Auto）
+//    2、强制闪光（Forced），
+//    3、消除红眼（Red-Eye）
+//    4、慢速闪光同步（Slow）
+//    5、强制关闭闪光（Off）
+    public void setFlashLed(String Value){
+        try {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(Value);
+            mCamera.setParameters(parameters);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * SurfaceView尺寸和PreSize预览尺寸不匹配导致变形，找到最接近的尺寸进行配置
+     * @param isPortrait  是否竖屏
+     * @param surfaceWidth
+     * @param surfaceHeight
+     * @param preSize
+     * @return
+     */
+    public Camera.Size getCloselyPreSize(boolean isPortrait,int surfaceWidth, int surfaceHeight, List<Camera.Size> preSize){
+        int currentWidth,currentHeight;
+        //如果是竖屏的 则交换宽高
+        if(isPortrait){
+            currentWidth = surfaceHeight;
+            currentHeight = surfaceWidth;
+        }else {
+            currentHeight = surfaceHeight;
+            currentWidth = surfaceWidth;
+        }
+
+        for (Camera.Size size: preSize) {
+            if(currentWidth == size.width && currentHeight == size.height){
+                return size;
+            }
+        }
+
+        // 得到与传入的宽高比最接近的size
+        float reqRatio = ((float) currentWidth) / currentHeight;
+        float curRatio, deltaRatio;
+        float deltaRatioMin = Float.MAX_VALUE;
+        Camera.Size retSize = null;
+        for (Camera.Size size : preSize) {
+            curRatio = ((float) size.width) / size.height;
+            deltaRatio = Math.abs(reqRatio - curRatio);
+            if (deltaRatio < deltaRatioMin) {
+                deltaRatioMin = deltaRatio;
+                retSize = size;
+            }
+        }
+        return retSize;
+    }
+
 }
