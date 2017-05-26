@@ -11,9 +11,11 @@ import android.hardware.Camera;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -44,6 +46,8 @@ public class TakePhotoActivity extends BaseActivity {
     private LinearLayout ll;
     private int flashLed = 0;
     private DisplayMetrics dm;
+    private ImageView imageView;
+    private View view,photoView;
 
 
     @Override
@@ -67,12 +71,16 @@ public class TakePhotoActivity extends BaseActivity {
     private void initView() {
 
         //屏幕尺寸
-//        dm = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(dm);
-//        LogUtils.e("屏幕分辨率w:"+dm.widthPixels+" h:"+dm.heightPixels);
+        dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        LogUtils.e("屏幕分辨率w:"+dm.widthPixels+" h:"+dm.heightPixels);
 
         frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
         ll = (LinearLayout) findViewById(R.id.flashLed_ll);
+        imageView = (ImageView) findViewById(R.id.image_crop);
+        view = (View) findViewById(R.id.image_view);
+        photoView = (View) findViewById(R.id.photoview);
+        view.setVisibility(View.INVISIBLE);
         findViewById(R.id.takePhoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +121,45 @@ public class TakePhotoActivity extends BaseActivity {
                 }
             }
         });
+
+
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        x = event.getRawX();
+                        y = event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float rawX = event.getRawX();
+                        float rawY = event.getRawY();
+
+                        double v1 = (rawX - x)*-1;
+                        double v2 = (rawY - y)*-1;
+
+                        LogUtils.e("zjb-->v1:"+v1+" v2:"+v2);
+
+                        imageView.scrollBy((int) v1,(int)v2);
+
+                        x = rawX;
+                        y = rawY;
+
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        break;
+
+
+                }
+
+
+                return true;
+            }
+        });
     }
+
+    private double x,y;
 
     // 判断相机是否支持
     private boolean checkCameraHardware(Context context) {
@@ -155,47 +201,57 @@ public class TakePhotoActivity extends BaseActivity {
 
         @Override
         public void onPictureTaken(final byte[] data, Camera camera) {
-            File pictureDir = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            if (pictureDir == null) {
-                LogUtils.e("没有读写权限");
-                return;
+            // 获取当前旋转角度, 并旋转图片
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                bitmap = rotateBitmapByDegree(bitmap, 90);
+            } else {
+                bitmap = rotateBitmapByDegree(bitmap, -90);
             }
-            final String picturePath = pictureDir
-                    + File.separator
-                    + new DateFormat().format("yyyyMMddHHmmss", new Date())
-                    .toString() + ".jpg";
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    File file = new File(picturePath);
-                    try {
-                        // 获取当前旋转角度, 并旋转图片
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        if (mCameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                            bitmap = rotateBitmapByDegree(bitmap, 90);
-                        } else {
-                            bitmap = rotateBitmapByDegree(bitmap, -90);
-                        }
-                        BufferedOutputStream bos = new BufferedOutputStream(
-                                new FileOutputStream(file));
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
-                        bos.flush();
-                        bos.close();
-                        bitmap.recycle();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
+            view.setVisibility(View.VISIBLE);
+            photoView.setVisibility(View.INVISIBLE);
+            imageView.setImageBitmap(bitmap);
+            LogUtils.e("zjb--->bitmap"+bitmap.getWidth()+" "+bitmap.getHeight());
             //拍照完后，继续预览
             mCamera.startPreview();
         }
     };
+
+
+
+    private void savePic(final Bitmap bitmap){
+        File pictureDir = Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        if (pictureDir == null) {
+            LogUtils.e("没有读写权限");
+            return;
+        }
+        final String picturePath = pictureDir
+                + File.separator
+                + new DateFormat().format("yyyyMMddHHmmss", new Date())
+                .toString() + ".jpg";
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(picturePath);
+                try {
+
+                    BufferedOutputStream bos = new BufferedOutputStream(
+                            new FileOutputStream(file));
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+                    bos.flush();
+                    bos.close();
+                    bitmap.recycle();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     // 设置相机横竖屏
     public static void setCameraDisplayOrientation(Activity activity,int cameraId, Camera camera) {
@@ -357,4 +413,10 @@ public class TakePhotoActivity extends BaseActivity {
         return retSize;
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        photoView.setVisibility(View.VISIBLE);
+        view.setVisibility(View.INVISIBLE);
+    }
 }
