@@ -7,10 +7,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
 import com.aread.cn.databinding.ActivityTakephotoBinding;
+import com.aread.cn.listener.MyGestureListener;
 import com.aread.cn.utils.LogUtils;
 import com.aread.cn.utils.ShowMsgUitls;
 import com.aread.cn.view.CanmeraSurfaceView;
@@ -47,7 +50,8 @@ public class TakePhotoActivity extends BaseActivity {
     private int flashLed = 0;
     private DisplayMetrics dm;
     private ImageView imageView;
-    private View view,photoView;
+    private View view,photoView,bgView;
+    private GestureDetector gestureDetector;
 
 
     @Override
@@ -68,8 +72,12 @@ public class TakePhotoActivity extends BaseActivity {
         setCameraDisplayOrientation(this,mCameraId,mCamera);
     }
 
+
+    private float startX,startY;
+    private Matrix matrix = new Matrix();
     private void initView() {
 
+        gestureDetector = new GestureDetector(this,new MyGestureListener());
         //屏幕尺寸
         dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -79,6 +87,7 @@ public class TakePhotoActivity extends BaseActivity {
         ll = (LinearLayout) findViewById(R.id.flashLed_ll);
         imageView = (ImageView) findViewById(R.id.image_crop);
         view = (View) findViewById(R.id.image_view);
+        bgView = (View) findViewById(R.id.bg);
         photoView = (View) findViewById(R.id.photoview);
         view.setVisibility(View.INVISIBLE);
         findViewById(R.id.takePhoto).setOnClickListener(new View.OnClickListener() {
@@ -126,38 +135,55 @@ public class TakePhotoActivity extends BaseActivity {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+//                   return gestureDetector.onTouchEvent(event);
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
-                        x = event.getRawX();
-                        y = event.getRawY();
+                        if(event.getPointerCount() == 1){
+                            startX = event.getRawX();
+                            startY = event.getRawY();
+                        }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         float rawX = event.getRawX();
                         float rawY = event.getRawY();
 
-                        double v1 = (rawX - x)*-1;
-                        double v2 = (rawY - y)*-1;
+                        float vX = rawX - startX;
+                        float vY = rawY - startY;
+                        int height = bgView.getHeight();
 
-                        LogUtils.e("zjb-->v1:"+v1+" v2:"+v2);
 
-                        imageView.scrollBy((int) v1,(int)v2);
+                        if(vY == 0)return true;
 
-                        x = rawX;
-                        y = rawY;
+                        LogUtils.e("zjb---->vY:"+vY+" height:"+height+" rawX："+rawX+" rawY:"+rawY);
+                        if(vY > height){
+                            vY = height;
+                        }else if(vY < -height){
+                            vY = -height;
+
+                        }
+                        matrix.setTranslate(0,vY);
+                        imageView.setImageMatrix(matrix);
 
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
+                        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+                        Bitmap bitmap = drawable.getBitmap();
+                        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, (int) Math.abs((event.getRawX() - startX)), bitmap.getWidth(), dm.heightPixels - 2 * bgView.getHeight());
+                        savePic(bitmap1);
+                        bitmap.recycle();
                         break;
 
 
                 }
 
-
                 return true;
             }
         });
+
     }
+
+
 
     private double x,y;
 
@@ -209,12 +235,23 @@ public class TakePhotoActivity extends BaseActivity {
                 bitmap = rotateBitmapByDegree(bitmap, -90);
             }
 
+
+            float v = dm.heightPixels * 1.0f / bitmap.getHeight();
+            Matrix matrix1 = new Matrix();
+            matrix1.setScale(v,v);
+            Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, dm.widthPixels, dm.heightPixels, matrix1, false);
+            bitmap.recycle();
+
             view.setVisibility(View.VISIBLE);
             photoView.setVisibility(View.INVISIBLE);
-            imageView.setImageBitmap(bitmap);
-            LogUtils.e("zjb--->bitmap"+bitmap.getWidth()+" "+bitmap.getHeight());
+            imageView.setImageBitmap(bitmap1);
+            LogUtils.e("zjb--->bitmap"+bitmap1.getWidth()+" "+bitmap1.getHeight());
             //拍照完后，继续预览
             mCamera.startPreview();
+
+
+//            bitmap.recycle();
+
         }
     };
 
