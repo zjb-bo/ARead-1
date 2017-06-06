@@ -1,6 +1,7 @@
 package com.aread.cn.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import com.aread.cn.bean.PopupWindowIdBean;
 import com.aread.cn.bean.RecordTextBean;
 import com.aread.cn.bean.RxBus;
 import com.aread.cn.bean.RxBusWeatherInfoBean;
+import com.aread.cn.bean.UserImagerUrlBean;
 import com.aread.cn.bean.WeatherInfoBean;
 import com.aread.cn.databinding.ActivityMainBinding;
 import com.aread.cn.utils.GaoDeMapUtils;
@@ -89,6 +91,12 @@ public class MainActivity extends BaseActivity {
                         weatherInfoBean = rxBusWeatherInfoBean.getWeatherInfoBean();
                     }
                 });
+        RxBus.getInstance().toObserverable(UserImagerUrlBean.class).subscribe(new Action1<UserImagerUrlBean>() {
+            @Override
+            public void call(UserImagerUrlBean userImagerUrlBean) {
+                userImg.setImageURI(Uri.fromFile(userImagerUrlBean.getImageFile()));
+            }
+        });
     }
 
     private void initFloatBtn() {
@@ -152,7 +160,7 @@ public class MainActivity extends BaseActivity {
         headerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,UserCenterActivity.class));
+                startActivity(new Intent(MainActivity.this,TakePhotoActivity.class));
             }
         });
     }

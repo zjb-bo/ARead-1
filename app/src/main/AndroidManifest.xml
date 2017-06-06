@@ -45,7 +45,7 @@
             android:value="550cd34022b763b732ad82d11338a0ca"/>
         <service android:name="com.amap.api.location.APSService"></service>
 
-        <activity android:name=".activity.TakePhotoActivity"
+        <activity android:name=".activity.MainActivity"
             android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,7 +56,7 @@
         <activity android:name=".activity.LoginAcitity"/>
         <activity android:name=".activity.RecordTextAcivity"/>
         <activity android:name=".activity.UserCenterActivity"/>
-        <!--<activity android:name=".activity.TakePhotoActivity"/>-->
+        <activity android:name=".activity.TakePhotoActivity"/>
 
         <activity android:name=".activity.SplashActivity"/>
         <!--以下是Umeng社会化组件集成的 三方分享和授权相关配置-->

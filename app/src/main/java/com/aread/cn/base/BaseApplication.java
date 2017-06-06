@@ -18,6 +18,7 @@ public class BaseApplication extends Application {
         app = this;
         initAppkey();
         UMShareAPI.get(this);
+
     }
 
     private void initAppkey() {
@@ -31,4 +32,17 @@ public class BaseApplication extends Application {
     }
 
 
+    public int getStatueBarHeight(){
+        /**
+         * 获取状态栏高度——方法1
+         * */
+        int statusBarHeight1 = -1;
+        //获取status_bar_height资源的ID
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight1 = getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight1;
+    }
 }

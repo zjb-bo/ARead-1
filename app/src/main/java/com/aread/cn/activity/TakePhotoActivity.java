@@ -12,6 +12,7 @@ import android.hardware.Camera;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -23,6 +24,9 @@ import android.widget.Toast;
 
 import com.aread.cn.R;
 import com.aread.cn.base.BaseActivity;
+import com.aread.cn.base.BaseApplication;
+import com.aread.cn.bean.RxBus;
+import com.aread.cn.bean.UserImagerUrlBean;
 import com.aread.cn.databinding.ActivityTakephotoBinding;
 import com.aread.cn.listener.MyGestureListener;
 import com.aread.cn.utils.LogUtils;
@@ -37,6 +41,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by Administrator on 2017/5/25.
  */
@@ -50,7 +59,7 @@ public class TakePhotoActivity extends BaseActivity {
     private int flashLed = 0;
     private DisplayMetrics dm;
     private ImageView imageView;
-    private View view,photoView,bgView;
+    private View view, photoView, bgView;
     private GestureDetector gestureDetector;
 
 
@@ -62,26 +71,28 @@ public class TakePhotoActivity extends BaseActivity {
     @Override
     protected void initData() {
         initView();
-        if(!checkCameraHardware(this)){
+        if (!checkCameraHardware(this)) {
             ShowMsgUitls.showCenterToast("不支持相机", Toast.LENGTH_SHORT);
-        }else {
+        } else {
             openCamera();
         }
 
         //设置相机的方向，随屏幕方向
-        setCameraDisplayOrientation(this,mCameraId,mCamera);
+        setCameraDisplayOrientation(this, mCameraId, mCamera);
     }
 
 
-    private float startX,startY;
+    private float startX = -1, startY = -1;
     private Matrix matrix = new Matrix();
+    private float v5 = 0;
+
     private void initView() {
 
-        gestureDetector = new GestureDetector(this,new MyGestureListener());
+        gestureDetector = new GestureDetector(this, new MyGestureListener());
         //屏幕尺寸
         dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        LogUtils.e("屏幕分辨率w:"+dm.widthPixels+" h:"+dm.heightPixels);
+        LogUtils.e("屏幕分辨率w:" + dm.widthPixels + " h:" + dm.heightPixels);
 
         frameLayout = (FrameLayout) findViewById(R.id.frameLayout);
         ll = (LinearLayout) findViewById(R.id.flashLed_ll);
@@ -96,14 +107,14 @@ public class TakePhotoActivity extends BaseActivity {
                 mCamera.autoFocus(new Camera.AutoFocusCallback() {
                     @Override
                     public void onAutoFocus(boolean success, Camera camera) {
-                        ShowMsgUitls.showCenterToast("正在聚焦",Toast.LENGTH_SHORT);
+                        ShowMsgUitls.showCenterToast("正在聚焦", Toast.LENGTH_SHORT);
 
-                        if(success){
-                            ShowMsgUitls.showCenterToast("聚焦成功",Toast.LENGTH_SHORT);
-                        }else {
-                            ShowMsgUitls.showCenterToast("聚焦失败",Toast.LENGTH_SHORT);
+                        if (success) {
+                            ShowMsgUitls.showCenterToast("聚焦成功", Toast.LENGTH_SHORT);
+                        } else {
+                            ShowMsgUitls.showCenterToast("聚焦失败", Toast.LENGTH_SHORT);
                         }
-                        mCamera.takePicture(null,null,mPictureCallback);
+                        mCamera.takePicture(null, null, mPictureCallback);
                     }
                 });
             }
@@ -118,14 +129,14 @@ public class TakePhotoActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 //                switchCamera();
-                ShowMsgUitls.showCenterToast("点击了闪光灯",Toast.LENGTH_SHORT);
+                ShowMsgUitls.showCenterToast("点击了闪光灯", Toast.LENGTH_SHORT);
                 int minWidth = ll.getWidth() * -1;
                 int maxWidth = ll.getWidth();
-                if(flashLed == 0){
-                    startValue(ll,"X",minWidth,0);
+                if (flashLed == 0) {
+                    startValue(ll, "X", minWidth, 0);
                     flashLed = 1;
-                }else {
-                    startValue(ll,"X",0,minWidth);
+                } else {
+                    startValue(ll, "X", 0, minWidth);
                     flashLed = 0;
                 }
             }
@@ -135,10 +146,11 @@ public class TakePhotoActivity extends BaseActivity {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                int height = bgView.getHeight();
 //                   return gestureDetector.onTouchEvent(event);
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if(event.getPointerCount() == 1){
+                        if (event.getPointerCount() == 1) {
                             startX = event.getRawX();
                             startY = event.getRawY();
                         }
@@ -149,31 +161,31 @@ public class TakePhotoActivity extends BaseActivity {
 
                         float vX = rawX - startX;
                         float vY = rawY - startY;
-                        int height = bgView.getHeight();
 
 
-                        if(vY == 0)return true;
+                        vY += v5;//保持第一次之后的滑动不跳动
 
-                        LogUtils.e("zjb---->vY:"+vY+" height:"+height+" rawX："+rawX+" rawY:"+rawY);
-                        if(vY > height){
+                        LogUtils.e("zjb---->vY:" + vY + " height:" + height + " rawX：" + rawX + " rawY:" + rawY);
+                        if (vY > height) {
                             vY = height;
-                        }else if(vY < -height){
+                        } else if (vY < -height) {
                             vY = -height;
 
                         }
-                        matrix.setTranslate(0,vY);
+                        matrix.setTranslate(0, vY);
                         imageView.setImageMatrix(matrix);
 
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
                         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-                        Bitmap bitmap = drawable.getBitmap();
-                        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, (int) Math.abs((event.getRawX() - startX)), bitmap.getWidth(), dm.heightPixels - 2 * bgView.getHeight());
-                        savePic(bitmap1);
-                        bitmap.recycle();
+                        bitmap = drawable.getBitmap();
+                        Matrix imageMatrix = imageView.getImageMatrix();
+                        float[] value = new float[9];
+                        imageMatrix.getValues(value);
+                        vy = (int) ((int) height - value[5]);
+                        v5 = value[5];
                         break;
-
 
                 }
 
@@ -181,11 +193,32 @@ public class TakePhotoActivity extends BaseActivity {
             }
         });
 
+        findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int heg = dm.heightPixels - 2 * bgView.getHeight();
+                if (bitmap == null)return;
+                savePic(Bitmap.createBitmap(bitmap, 0, vy, bitmap.getWidth(), heg));
+            }
+        });
+        findViewById(R.id.cancle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view.setVisibility(View.INVISIBLE);
+                photoView.setVisibility(View.VISIBLE);
+                //，继续预览
+                mCamera.startPreview();
+            }
+        });
+
+
     }
 
+    private Bitmap bitmap;
+    private int vy;
 
 
-    private double x,y;
+    private double x, y;
 
     // 判断相机是否支持
     private boolean checkCameraHardware(Context context) {
@@ -212,6 +245,7 @@ public class TakePhotoActivity extends BaseActivity {
         }
         return c;
     }
+
     // 释放相机
     public void releaseCamera() {
         if (mCamera != null) {
@@ -234,18 +268,17 @@ public class TakePhotoActivity extends BaseActivity {
             } else {
                 bitmap = rotateBitmapByDegree(bitmap, -90);
             }
-
-
-            float v = dm.heightPixels * 1.0f / bitmap.getHeight();
-            Matrix matrix1 = new Matrix();
-            matrix1.setScale(v,v);
-            Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, dm.widthPixels, dm.heightPixels, matrix1, false);
+            int statueBarHeight = BaseApplication.getContext().getStatueBarHeight();
+            if (statueBarHeight != -1) {
+                dm.heightPixels -= statueBarHeight;
+            }
+            Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, dm.widthPixels, dm.heightPixels, true);//将bitmap缩放为屏幕大小
             bitmap.recycle();
 
             view.setVisibility(View.VISIBLE);
             photoView.setVisibility(View.INVISIBLE);
             imageView.setImageBitmap(bitmap1);
-            LogUtils.e("zjb--->bitmap"+bitmap1.getWidth()+" "+bitmap1.getHeight());
+            LogUtils.e("zjb--->bitmap" + bitmap1.getWidth() + " " + bitmap1.getHeight());
             //拍照完后，继续预览
             mCamera.startPreview();
 
@@ -256,8 +289,7 @@ public class TakePhotoActivity extends BaseActivity {
     };
 
 
-
-    private void savePic(final Bitmap bitmap){
+    private void savePic(final Bitmap bitmap) {
         File pictureDir = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         if (pictureDir == null) {
@@ -268,10 +300,9 @@ public class TakePhotoActivity extends BaseActivity {
                 + File.separator
                 + new DateFormat().format("yyyyMMddHHmmss", new Date())
                 .toString() + ".jpg";
-
-        new Thread(new Runnable() {
+        Observable.create(new Observable.OnSubscribe<File>() {
             @Override
-            public void run() {
+            public void call(Subscriber<? super File> subscriber) {
                 File file = new File(picturePath);
                 try {
 
@@ -281,17 +312,42 @@ public class TakePhotoActivity extends BaseActivity {
                     bos.flush();
                     bos.close();
                     bitmap.recycle();
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    subscriber.onNext(file);
+                    subscriber.onCompleted();
                 }
+
             }
-        }).start();
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<File>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.e("zjb", "onCompleted: ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("zjb", "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(File file) {
+                        Log.e("zjb", "onNext: " + file.getName());
+                        RxBus.getInstance().post(new UserImagerUrlBean((file)));
+                        finish();
+                    }
+                });
+
     }
 
     // 设置相机横竖屏
-    public static void setCameraDisplayOrientation(Activity activity,int cameraId, Camera camera) {
+    public static void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
 
         android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(cameraId, info);
@@ -346,10 +402,9 @@ public class TakePhotoActivity extends BaseActivity {
     public void switchCamera() {
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
         Camera.getCameraInfo(mCameraId, cameraInfo);
-        if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK){
+        if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
             mCameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
-        }
-        else{
+        } else {
             mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
         }
         frameLayout.removeView(canmeraSurfaceView);
@@ -359,6 +414,7 @@ public class TakePhotoActivity extends BaseActivity {
     }
 
     private CanmeraSurfaceView canmeraSurfaceView;
+
     private void openCamera() {
         mCamera = getCameraInstance();
         canmeraSurfaceView = new CanmeraSurfaceView(mCamera, this);
@@ -373,10 +429,11 @@ public class TakePhotoActivity extends BaseActivity {
 
     /**
      * 设置view的平移动画，可设置X或Y方向的平移
-     * @param view  要平移的view
+     *
+     * @param view 要平移的view
      */
-    public static void startValue(final View view,final String orientation,float from,float to){
-        final ValueAnimator anim = ValueAnimator.ofFloat(from,to);
+    public static void startValue(final View view, final String orientation, float from, float to) {
+        final ValueAnimator anim = ValueAnimator.ofFloat(from, to);
         anim.setTarget(view);
         anim.setDuration(200);
         anim.start();
@@ -385,9 +442,9 @@ public class TakePhotoActivity extends BaseActivity {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 if (orientation.equals("y")) {
-                    view.setTranslationY((Float)animation.getAnimatedValue());
-                }else{
-                    view.setTranslationX((Float)animation.getAnimatedValue());
+                    view.setTranslationY((Float) animation.getAnimatedValue());
+                } else {
+                    view.setTranslationX((Float) animation.getAnimatedValue());
                 }
             }
         });
@@ -399,37 +456,38 @@ public class TakePhotoActivity extends BaseActivity {
 //    3、消除红眼（Red-Eye）
 //    4、慢速闪光同步（Slow）
 //    5、强制关闭闪光（Off）
-    public void setFlashLed(String Value){
+    public void setFlashLed(String Value) {
         try {
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setFlashMode(Value);
             mCamera.setParameters(parameters);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
      * SurfaceView尺寸和PreSize预览尺寸不匹配导致变形，找到最接近的尺寸进行配置
-     * @param isPortrait  是否竖屏
+     *
+     * @param isPortrait    是否竖屏
      * @param surfaceWidth
      * @param surfaceHeight
      * @param preSize
      * @return
      */
-    public Camera.Size getCloselyPreSize(boolean isPortrait,int surfaceWidth, int surfaceHeight, List<Camera.Size> preSize){
-        int currentWidth,currentHeight;
+    public Camera.Size getCloselyPreSize(boolean isPortrait, int surfaceWidth, int surfaceHeight, List<Camera.Size> preSize) {
+        int currentWidth, currentHeight;
         //如果是竖屏的 则交换宽高
-        if(isPortrait){
+        if (isPortrait) {
             currentWidth = surfaceHeight;
             currentHeight = surfaceWidth;
-        }else {
+        } else {
             currentHeight = surfaceHeight;
             currentWidth = surfaceWidth;
         }
 
-        for (Camera.Size size: preSize) {
-            if(currentWidth == size.width && currentHeight == size.height){
+        for (Camera.Size size : preSize) {
+            if (currentWidth == size.width && currentHeight == size.height) {
                 return size;
             }
         }
@@ -451,9 +509,9 @@ public class TakePhotoActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
-//        super.onBackPressed();
-        photoView.setVisibility(View.VISIBLE);
-        view.setVisibility(View.INVISIBLE);
+    public void finish() {
+        super.finish();
+        releaseCamera();
     }
+
 }
